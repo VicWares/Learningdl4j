@@ -1,6 +1,6 @@
 package org.example;
 /*****************************************************************************************
- * DL4J Example: version 220117
+ * DL4J Example: version 220118
  *****************************************************************************************/
 import org.apache.log4j.BasicConfigurator;
 import org.datavec.api.records.reader.RecordReader;
@@ -29,7 +29,7 @@ public class Main
 {
     private static int FEATURES_COUNT = 4;
     private static int CLASSES_COUNT = 3;
-    private static String version = "230117A";
+    private static String version = "230118";
     public static void main(String[] args)
     {
         System.out.println("DL4J Example: version " + version);
