@@ -28,7 +28,7 @@ public class Main
 {
     private static int FEATURES_COUNT = 4;
     private static int CLASSES_COUNT = 3;
-    private static String version = "230117";
+    private static String version = "230117A";
     public static void main(String[] args)
     {
         System.out.println("DL4J Example: version " + version);
