@@ -8,6 +8,7 @@ import org.datavec.api.records.reader.impl.csv.CSVRecordReader;
 import org.datavec.api.split.FileSplit;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
 import org.deeplearning4j.eval.Evaluation;
+import org.deeplearning4j.eval.RegressionEvaluation;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.layers.DenseLayer;
@@ -21,9 +22,9 @@ import org.nd4j.linalg.dataset.SplitTestAndTrain;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.NormalizerStandardize;
+import org.nd4j.linalg.io.ClassPathResource;
 import org.nd4j.linalg.learning.config.Nesterovs;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
-import org.nd4j.linalg.io.ClassPathResource;
 public class Main
 {
     private static int FEATURES_COUNT = 4;
@@ -32,12 +33,14 @@ public class Main
     public static void main(String[] args)
     {
         System.out.println("DL4J Example: version " + version);
+        RegressionEvaluation eval = new RegressionEvaluation();
         BasicConfigurator.configure();
         loadData();
     }
     private static void loadData()
     {
-        try (RecordReader recordReader = new CSVRecordReader(0, ',')) {
+        try (RecordReader recordReader = new CSVRecordReader(0, ','))
+        {
             recordReader.initialize(new FileSplit(
                     new ClassPathResource("iris.csv").getFile()
             ));
