@@ -1,6 +1,6 @@
 package org.example;
 /*****************************************************************************************
- * DL4J Example: version 220119A
+ * DL4J Example: version 220120
  *****************************************************************************************/
 import org.apache.log4j.BasicConfigurator;
 import org.datavec.api.records.reader.RecordReader;
@@ -8,6 +8,7 @@ import org.datavec.api.records.reader.impl.csv.CSVRecordReader;
 import org.datavec.api.split.FileSplit;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
 import org.deeplearning4j.eval.Evaluation;
+import org.deeplearning4j.eval.RegressionEvaluation;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.layers.DenseLayer;
@@ -24,21 +25,23 @@ import org.nd4j.linalg.dataset.api.preprocessor.NormalizerStandardize;
 import org.nd4j.linalg.io.ClassPathResource;
 import org.nd4j.linalg.learning.config.Nesterovs;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
-import javax.swing.*;
-public class Main extends JComponent
+public class Main
 {
     private static int FEATURES_COUNT = 4;
     private static int CLASSES_COUNT = 3;
-    private static String version = "230119A";
+    private static String version = "230117A";
+    private static Object eval;
     public static void main(String[] args)
     {
         System.out.println("DL4J Example: version " + version);
+        RegressionEvaluation eval = new RegressionEvaluation();
         BasicConfigurator.configure();
         loadData();
     }
     private static void loadData()
     {
-        try (RecordReader recordReader = new CSVRecordReader(0, ',')) {
+        try (RecordReader recordReader = new CSVRecordReader(0, ','))
+        {
             recordReader.initialize(new FileSplit(
                     new ClassPathResource("iris.csv").getFile()
             ));
@@ -73,13 +76,14 @@ public class Main extends JComponent
                 .build();
         MultiLayerNetwork model = new MultiLayerNetwork(configuration);
         model.init();
+        Evaluation eval = null;
         for (int i = 0; i < 100; i++) {
             INDArray output = model.output(testData.getFeatureMatrix());
-            Evaluation eval = new Evaluation(3);
+            eval = new Evaluation(3);
             model.fit(trainingData);
             eval.eval(testData.getLabels(), output);
             System.out.printf("\nAccuracy " + eval.accuracy());
         }
-
+        System.out.printf(eval.stats());
     }
 }

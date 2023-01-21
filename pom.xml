@@ -6,7 +6,7 @@
 
     <groupId>org.example</groupId>
     <artifactId>LearningDL4J</artifactId>
-    <version>220119A</version>
+    <version>220117</version>
 
     <properties>
         <maven.compiler.source>18</maven.compiler.source>
@@ -16,12 +16,7 @@
     </properties>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-ui -->
-        <dependency>
-            <groupId>org.deeplearning4j</groupId>
-            <artifactId>deeplearning4j-ui</artifactId>
-            <version>1.0.0-M2.1</version>
-        </dependency>
+
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-native-platform</artifactId>
