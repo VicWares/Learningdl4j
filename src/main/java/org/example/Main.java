@@ -1,6 +1,6 @@
 package org.example;
 /*****************************************************************************************
- * DL4J Example: version 220122
+ * DL4J Example: version 220123
  *****************************************************************************************/
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -35,13 +35,12 @@ public class Main extends JComponent implements ActionListener
 {
     private static int FEATURES_COUNT = 4;
     private static int CLASSES_COUNT = 3;
-    private static String version = "230120";
+    private static String version = "230123";
     private static Object eval;
     private JFrame jf;
     private int x = 100;
     private int y = 100;
     private double accuracy;
-    private Timer ticker = new Timer(1000, this);
     private Graphics2D g2;
     public Painter painter;
     public static void main(String[] args)
@@ -51,8 +50,6 @@ public class Main extends JComponent implements ActionListener
     }
     private void getGoing()
     {
-        Main graphicsDemo = new Main();
-        ticker.start();
         JFrame jFrame = new JFrame("WELCOME TO SUPERNN");
         jFrame.add(this);
         jFrame.setSize(1000, 1000);
@@ -103,25 +100,32 @@ public class Main extends JComponent implements ActionListener
         MultiLayerNetwork model = new MultiLayerNetwork(configuration);
         model.init();
         Evaluation eval = null;
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 1000; i++)
         {
             INDArray output = model.output(testData.getFeatureMatrix());
             eval = new Evaluation(3);
             model.fit(trainingData);
             eval.eval(testData.getLabels(), output);
             accuracy = eval.accuracy();
-            out.print("\nAccuracy " + accuracy);
-            x += 10;
+            out.print("\nAccuracy " + accuracy + " " + x + " " + y);
+            //if (i % 5 == 0)
+            {
+                repaint();
+            }
         }
         out.printf(eval.stats());
     }
     public void paint(Graphics g)
     {
+        g.setColor(Color.black);
         g.fillOval(x, y, 10, 10);
+        x += 1;
+        y = (int) (accuracy * 1000);
+        super.paint(g);
    }
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        repaint();
+        out.println("tick");
     }
 }
