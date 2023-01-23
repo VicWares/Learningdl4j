@@ -1,7 +1,11 @@
 package org.example;
 /*****************************************************************************************
- * DL4J Example: version 220120
+ * DL4J Example: version 220122
  *****************************************************************************************/
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.*;
 import org.apache.log4j.BasicConfigurator;
 import org.datavec.api.records.reader.RecordReader;
 import org.datavec.api.records.reader.impl.csv.CSVRecordReader;
@@ -25,23 +29,45 @@ import org.nd4j.linalg.dataset.api.preprocessor.NormalizerStandardize;
 import org.nd4j.linalg.io.ClassPathResource;
 import org.nd4j.linalg.learning.config.Nesterovs;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
-public class Main
+
+import static java.lang.System.out;
+public class Main extends JComponent implements ActionListener
 {
     private static int FEATURES_COUNT = 4;
     private static int CLASSES_COUNT = 3;
-    private static String version = "230117A";
+    private static String version = "230120";
     private static Object eval;
+    private JFrame jf;
+    private int x = 100;
+    private int y = 100;
+    private double accuracy;
+    private Timer ticker = new Timer(1000, this);
+    private Graphics2D g2;
+    public Painter painter;
     public static void main(String[] args)
     {
-        System.out.println("DL4J Example: version " + version);
+        out.println("DL4J Example: version " + version);
+        new Main().getGoing();
+    }
+    private void getGoing()
+    {
+        Main graphicsDemo = new Main();
+        ticker.start();
+        JFrame jFrame = new JFrame("WELCOME TO SUPERNN");
+        jFrame.add(this);
+        jFrame.setSize(1000, 1000);
+        jFrame.setBackground(Color.GRAY);
+        setForeground(Color.black);
+        jFrame.setVisible(true);
+        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         RegressionEvaluation eval = new RegressionEvaluation();
         BasicConfigurator.configure();
         loadData();
+        out.println("\nLearningDL4J...Main thread finished normally");
     }
-    private static void loadData()
+    private void loadData()
     {
-        try (RecordReader recordReader = new CSVRecordReader(0, ','))
-        {
+        try (RecordReader recordReader = new CSVRecordReader(0, ',')) {
             recordReader.initialize(new FileSplit(
                     new ClassPathResource("iris.csv").getFile()
             ));
@@ -56,10 +82,10 @@ public class Main
             DataSet testingData = testAndTrain.getTest();
             irisNNetwork(trainingData, testingData);
         } catch (Exception e) {
-            System.out.println("Error: " + e.getLocalizedMessage());
+            out.println("Error: " + e.getLocalizedMessage());
         }
     }
-    private static void irisNNetwork(DataSet trainingData, DataSet testData)
+    private void irisNNetwork(DataSet trainingData, DataSet testData)
     {
         MultiLayerConfiguration configuration = new NeuralNetConfiguration.Builder()
                 .activation(Activation.TANH)
@@ -77,13 +103,25 @@ public class Main
         MultiLayerNetwork model = new MultiLayerNetwork(configuration);
         model.init();
         Evaluation eval = null;
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++)
+        {
             INDArray output = model.output(testData.getFeatureMatrix());
             eval = new Evaluation(3);
             model.fit(trainingData);
             eval.eval(testData.getLabels(), output);
-            System.out.printf("\nAccuracy " + eval.accuracy());
+            accuracy = eval.accuracy();
+            out.print("\nAccuracy " + accuracy);
+            x += 10;
         }
-        System.out.printf(eval.stats());
+        out.printf(eval.stats());
+    }
+    public void paint(Graphics g)
+    {
+        g.fillOval(x, y, 10, 10);
+   }
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
+        repaint();
     }
 }

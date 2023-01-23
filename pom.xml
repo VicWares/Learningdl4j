@@ -6,7 +6,7 @@
 
     <groupId>org.example</groupId>
     <artifactId>LearningDL4J</artifactId>
-    <version>220117</version>
+    <version>220122</version>
 
     <properties>
         <maven.compiler.source>18</maven.compiler.source>
@@ -14,6 +14,19 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dl4j.version>1.0.0-alpha</dl4j.version>
     </properties>
+ <build>
+     <plugins>
+     <plugin>
+         <groupId>org.codehaus.mojo</groupId>
+         <artifactId>exec-maven-plugin</artifactId>
+         <version>1.4.0</version>
+         <configuration>
+             <mainClass>org.example</mainClass>
+         </configuration>
+     </plugin>
+     </plugins>
+ </build>
+
 
     <dependencies>
 
