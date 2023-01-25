@@ -1,10 +1,10 @@
 package org.example;
 /*****************************************************************************************
- * DL4J Example: version 220123
+ * DL4J Example: version 220124
  *****************************************************************************************/
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.geom.Dimension2D;
+import java.util.ArrayList;
 import javax.swing.*;
 import org.apache.log4j.BasicConfigurator;
 import org.datavec.api.records.reader.RecordReader;
@@ -29,20 +29,22 @@ import org.nd4j.linalg.dataset.api.preprocessor.NormalizerStandardize;
 import org.nd4j.linalg.io.ClassPathResource;
 import org.nd4j.linalg.learning.config.Nesterovs;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
-
 import static java.lang.System.out;
-public class Main extends JComponent implements ActionListener
+public class Main extends JComponent
 {
     private static int FEATURES_COUNT = 4;
     private static int CLASSES_COUNT = 3;
     private static String version = "230123";
     private static Object eval;
-    private JFrame jf;
     private int x = 100;
     private int y = 100;
     private double accuracy;
     private Graphics2D g2;
     public Painter painter;
+    private ArrayList<Dimension> graphPointsList = new ArrayList<>();
+    private Dimension2D oldPoint = new Dimension(0,0);
+    private Dimension2D newPoint = new Dimension(0,0);;
+    private int i;
     public static void main(String[] args)
     {
         out.println("DL4J Example: version " + version);
@@ -52,7 +54,7 @@ public class Main extends JComponent implements ActionListener
     {
         JFrame jFrame = new JFrame("WELCOME TO SUPERNN");
         jFrame.add(this);
-        jFrame.setSize(1000, 1000);
+        jFrame.setSize(1000, 2000);
         jFrame.setBackground(Color.GRAY);
         setForeground(Color.black);
         jFrame.setVisible(true);
@@ -100,32 +102,34 @@ public class Main extends JComponent implements ActionListener
         MultiLayerNetwork model = new MultiLayerNetwork(configuration);
         model.init();
         Evaluation eval = null;
-        for (int i = 0; i < 1000; i++)
+        for (i = 0; i < 1000; i++)
         {
             INDArray output = model.output(testData.getFeatureMatrix());
             eval = new Evaluation(3);
             model.fit(trainingData);
             eval.eval(testData.getLabels(), output);
             accuracy = eval.accuracy();
-            out.print("\nAccuracy " + accuracy + " " + x + " " + y);
-            //if (i % 5 == 0)
-            {
-                repaint();
-            }
+            newPoint = new Dimension(i, (int) (accuracy * 1000));
+            out.print("\nAccuracy " + accuracy + " " + newPoint.getWidth() + " " + newPoint.getHeight());
+            repaint();
+            oldPoint = newPoint;
         }
         out.printf(eval.stats());
     }
+    /***********************************************
+     * Draw RMS error graph
+     ***********************************************/
     public void paint(Graphics g)
     {
-        g.setColor(Color.black);
-        g.fillOval(x, y, 10, 10);
-        x += 1;
-        y = (int) (accuracy * 1000);
-        super.paint(g);
-   }
-    @Override
-    public void actionPerformed(ActionEvent e)
-    {
-        out.println("tick");
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setColor(Color.black);
+        g2.setStroke(new BasicStroke(6f));
+            int x1 = (int) oldPoint.getWidth();
+            int y1 = (int) oldPoint.getHeight();
+            int x2 = (int) newPoint.getWidth();
+            int y2 = (int) newPoint.getHeight();
+            g2.setColor(Color.blue);
+            g2.setStroke(new BasicStroke(5l));
+            g2.drawLine(x1, y1,  x2,  y2);
     }
 }
